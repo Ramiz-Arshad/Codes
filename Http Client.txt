@@ -1,0 +1,31 @@
+procedure SendRequest(URL: Text; Method: Text; RequestText: Text; var ResponseText: Text)
+    var
+        AuthText: Text;
+        Base64Convert: Codeunit "Base64 Convert";
+        Client: HttpClient;
+        Headers: HttpHeaders;
+        RequestMessage: HttpRequestMessage;
+        ResponseMessage: HttpResponseMessage;
+        RequestContent: HttpContent;
+    begin
+        Tenant.Get();
+        Headers := Client.DefaultRequestHeaders();
+        RequestMessage.SetRequestUri(Url);
+        RequestMessage.Method := Method;
+        AuthText := StrSubstNo('%1:%2', "User Name", "Password");
+        Headers.Add('Authorization', StrSubstNo('Basic %1', Base64Convert.ToBase64(AuthText)));
+        RequestMessage.GetHeaders(Headers);
+
+        RequestContent.WriteFrom(RequestText);
+        RequestContent.GetHeaders(Headers);
+        Headers.Remove('Content-Type');
+        Headers.Add('Content-Type', 'application/json');
+        RequestMessage.Content := RequestContent;
+
+        if Client.Send(RequestMessage, ResponseMessage) then
+            if ResponseMessage.IsSuccessStatusCode() then begin
+                if ResponseMessage.Content.ReadAs(ResponseText) then
+                    IsSuccess := true;
+            end else
+                ResponseMessage.Content.ReadAs(ResponseText);
+    end;
