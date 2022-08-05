@@ -1,0 +1,21 @@
+local procedure MyProcedure()
+	var
+		RecRef: RecordRef
+		FieldReference: FieldRef;
+	begin
+		RecRef.SetTable(Customer);
+		FieldReference := RecRef.Field(1);
+        if IsPrimaryKeyField(RecRef, FieldReference.Number) then
+			Message('Praimary Key');
+	end;
+
+local procedure IsPrimaryKeyField(RecRef: RecordRef; FieldNo: Integer): Boolean
+    var
+        i: Integer;
+    begin
+        for i := 1 to RecRef.KeyIndex(1).FieldCount do
+            if RecRef.KeyIndex(1).FieldIndex(i).Number = FieldNo then
+                exit(true);
+
+        exit(false);
+    end;
