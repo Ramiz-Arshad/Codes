@@ -5,7 +5,7 @@ local procedure MyProcedure()
 	begin
 		RecRef.SetTable(Customer);
 		FieldReference := RecRef.Field(1);
-        if IsPrimaryKeyField(RecRef, FieldReference.Number) then
+        	if IsPrimaryKeyField(RecRef, FieldReference.Number) then
 			Message('Praimary Key');
 	end;
 
